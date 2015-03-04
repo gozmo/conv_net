@@ -2,6 +2,7 @@ from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 import utils
+from sklearn.metrics import mean_squared_error
 
 try:
 	from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -43,3 +44,5 @@ if __name__ == "__main__":
 
     utils.save_net(net1, "net1")
     utils.plot_result(net1)
+
+    print mean_squared_error(net1.predict(X), y)
