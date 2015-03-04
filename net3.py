@@ -13,42 +13,44 @@ except ImportError:
     Conv2DLayer =layers.Conv2DLayer
     MaxPool2DLayer =layers.MaxPool2DLayer
 
+class Network:
+    def __init__(self):
+        self.name = "net3"
 
-if __name__ == "__main__":
-    Conv2DLayer =layers.cuda_convnet.Conv2DCCLayer
-    MaxPool2DLayer =layers.cuda_convnet.MaxPool2DCCLayer
+    def run(self, X, y):
+        Conv2DLayer =layers.cuda_convnet.Conv2DCCLayer
+        MaxPool2DLayer =layers.cuda_convnet.MaxPool2DCCLayer
 
-    net = NeuralNet(
-        layers=[
-            ('input', layers.InputLayer),
-            ('conv1', Conv2DLayer),
-            ('pool1', MaxPool2DLayer),
-            ('conv2', Conv2DLayer),
-            ('pool2', MaxPool2DLayer),
-            ('conv3', Conv2DLayer),
-            ('pool3', MaxPool2DLayer),
-            ('hidden4', layers.DenseLayer),
-            ('hidden5', layers.DenseLayer),
-            ('output', layers.DenseLayer),
-            ],
-        input_shape=(None, 1, 96, 96),
-        conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_ds=(2, 2),
-        conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_ds=(2, 2),
-        conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_ds=(2, 2),
-        hidden4_num_units=500, hidden5_num_units=500,
-        output_num_units=30, output_nonlinearity=None,
+        net = NeuralNet(
+            layers=[
+                ('input', layers.InputLayer),
+                ('conv1', Conv2DLayer),
+                ('pool1', MaxPool2DLayer),
+                ('conv2', Conv2DLayer),
+                ('pool2', MaxPool2DLayer),
+                ('conv3', Conv2DLayer),
+                ('pool3', MaxPool2DLayer),
+                ('hidden4', layers.DenseLayer),
+                ('hidden5', layers.DenseLayer),
+                ('output', layers.DenseLayer),
+                ],
+            input_shape=(None, 1, 96, 96),
+            conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_ds=(2, 2),
+            conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_ds=(2, 2),
+            conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_ds=(2, 2),
+            hidden4_num_units=500, hidden5_num_units=500,
+            output_num_units=30, output_nonlinearity=None,
 
-        update_learning_rate=0.01,
-        update_momentum=0.9,
+            update_learning_rate=0.01,
+            update_momentum=0.9,
 
-        regression=True,
-	batch_iterator_train=utils.FlipBatchIterator(batch_size=128),
-        max_epochs=3000,
-        verbose=1,
-        )
+            regression=True,
+        batch_iterator_train=utils.FlipBatchIterator(batch_size=128),
+            max_epochs=3000,
+            verbose=1,
+            )
 
-    X, y = utils.load2d()  # load 2-d data
-    net.fit(X, y)
+        net.fit(X, y)
 
-    utils.save_net(net, "net3")
-    print mean_squared_error(net.predict(X), y)
+        utils.save_net(net, self.name)
+        print mean_squared_error(net.predict(X), y)
