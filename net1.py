@@ -13,7 +13,7 @@ except ImportError:
 
 if __name__ == "__main__":
 
-    net1 = NeuralNet(
+    net = NeuralNet(
         layers=[   #three layers: one hidden layer
             ('input', layers.InputLayer),
             ('hidden', layers.DenseLayer),
@@ -36,13 +36,9 @@ if __name__ == "__main__":
         )
     X, y = utils.load()
 
-    print("X.shape == {}; X.min == {:.3f}; X.max == {:.3f}".format(
-        X.shape, X.min(), X.max()))
-    print("y.shape == {}; y.min == {:.3f}; y.max == {:.3f}".format(
-        y.shape, y.min(), y.max()))#with codecs.open(CORPUS_FILE, mode='w', encoding='utf-8') as news_file:
-    net1.fit(X, y)
+    net.fit(X, y)
 
-    utils.save_net(net1, "net1")
-    utils.plot_result(net1)
+    utils.save_net(net, "net1")
+    utils.plot_result(net)
 
-    print mean_squared_error(net1.predict(X), y)
+    print mean_squared_error(net.predict(X), y)

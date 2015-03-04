@@ -19,7 +19,7 @@ if __name__ == "__main__":
     Conv2DLayer = layers.cuda_convnet.Conv2DCCLayer
     MaxPool2DLayer = layers.cuda_convnet.MaxPool2DCCLayer
 
-    net5 = NeuralNet(
+    net = NeuralNet(
         layers=[
             ('input', layers.InputLayer),
             ('conv1', Conv2DLayer),
@@ -53,6 +53,6 @@ if __name__ == "__main__":
         )
 
     X, y = utils.load2d()  # load 2-d data
-    net5.fit(X, y)
-    utils.save_net(net5, "net5")
-    print mean_squared_error(net5.predict(X), y)
+    net.fit(X, y)
+    utils.save_net(net, "net5")
+    print mean_squared_error(net.predict(X), y)
