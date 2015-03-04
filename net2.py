@@ -115,4 +115,4 @@ if __name__ == "__main__":
         ax = fig.add_subplot(4, 4, i + 1, xticks=[], yticks=[])
         plot_sample(X[i], y_pred[i], ax)
 
-    pyplot.show()
+    #pyplot.show()

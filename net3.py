@@ -3,18 +3,19 @@ import os
 import numpy as np
 from lasagne import layers
 from lasagne.updates import nesterov_momentum
+from nolearn.lasagne import BatchIterator
 from nolearn.lasagne import NeuralNet
 from pandas.io.parsers import read_csv
 from sklearn.utils import shuffle
 from matplotlib import pyplot
-
+import lasagne.layers.cuda_convnet
 
 try:
-	from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
-	from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
+    from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
+    from lasagne.layers.cuda_convnet import MaxPool2DCCLayer as MaxPool2DLayer
 except ImportError:
-	Conv2DLayer = layers.Conv2DLayer
-	MaxPool2DLayer = layers.MaxPool2DLayer
+    Conv2DLayer = layers.Conv2DLayer
+    MaxPool2DLayer = layers.MaxPool2DLayer
 
 
 FTRAIN = '~/projects/conv_nn_facial_keypoints/data/training.csv'
@@ -56,12 +57,39 @@ def load2d(test=False, cols=None):
     X = X.reshape(-1, 1, 96, 96)
     return X, y
 
+class FlipBatchIterator(BatchIterator):
+    flip_indices = [
+        (0, 2), (1, 3),
+        (4, 8), (5, 9), (6, 10), (7, 11),
+        (12, 16), (13, 17), (14, 18), (15, 19),
+        (22, 24), (23, 25),
+        ]
+
+    def transform(self, Xb, yb):
+        Xb, yb = super(FlipBatchIterator, self).transform(Xb, yb)
+
+        # Flip half of the images in this batch at random:
+        bs = Xb.shape[0]
+        indices = np.random.choice(bs, bs / 2, replace=False)
+        Xb[indices] = Xb[indices, :, :, ::-1]
+
+        if yb is not None:
+            # Horizontal flip of all x coordinates:
+            yb[indices, ::2] = yb[indices, ::2] * -1
+
+            # Swap places, e.g. left_eye_center_x -> right_eye_center_x
+            for a, b in self.flip_indices:
+                yb[indices, a], yb[indices, b] = (
+                    yb[indices, b], yb[indices, a])
+
+        return Xb, yb
+
 if __name__ == "__main__":
     # use the cuda-convnet implementations of conv and max-pool layer
     Conv2DLayer = layers.cuda_convnet.Conv2DCCLayer
     MaxPool2DLayer = layers.cuda_convnet.MaxPool2DCCLayer
 
-    net2 = NeuralNet(
+    net3 = NeuralNet(
         layers=[
             ('input', layers.InputLayer),
             ('conv1', Conv2DLayer),
@@ -85,18 +113,19 @@ if __name__ == "__main__":
         update_momentum=0.9,
 
         regression=True,
-        max_epochs=1000,
+	batch_iterator_train=FlipBatchIterator(batch_size=128),
+        max_epochs=3000,
         verbose=1,
         )
 
     X, y = load2d()  # load 2-d data
-    net2.fit(X, y)
+    net3.fit(X, y)
 
     # Training for 1000 epochs will take a while.  We'll pickle the
     # trained model so that we can load it back later:
     import cPickle as pickle
-    with open('net2.pickle', 'wb') as f:
-        pickle.dump(net2, f, -1)
+    with open('net3.pickle', 'wb') as f:
+        pickle.dump(net3, f, -1)
 
 
     def plot_sample(x, y, axis):
@@ -105,7 +134,7 @@ if __name__ == "__main__":
         axis.scatter(y[0::2] * 48 + 48, y[1::2] * 48 + 48, marker='x', s=10)
 
     X, _ = load2d(test=True)
-    y_pred = net2.predict(X)
+    y_pred = net3.predict(X)
 
     fig = pyplot.figure(figsize=(6, 6))
     fig.subplots_adjust(
@@ -115,4 +144,4 @@ if __name__ == "__main__":
         ax = fig.add_subplot(4, 4, i + 1, xticks=[], yticks=[])
         plot_sample(X[i], y_pred[i], ax)
 
-    pyplot.show()
+    #pyplot.show()
