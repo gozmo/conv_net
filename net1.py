@@ -12,21 +12,23 @@ except ImportError:
 	MaxPool2DLayer = layers.MaxPool2DLayer
 
 class Network:
-    def __init__(self):
+    def __init__(self, input_size=9216, output_size=30):
         self.name = "net1"
+        self._input_size = input_size
+        self._output_size = output_size
 
     def run(self, X, y):
-        net = NeuralNet(
+        self.net = NeuralNet(
             layers=[   #three layers: one hidden layer
                 ('input', layers.InputLayer),
                 ('hidden', layers.DenseLayer),
                 ('output', layers.DenseLayer),
                 ],
              #layer parameters:
-            input_shape=(128, 9216),  # 128 images per batch times 96x96 input pixels
+            input_shape=(128, self._input_size),  # 128 images per batch times 96x96 input pixels
             hidden_num_units=100,  # number of units in hidden layer
             output_nonlinearity=None,  # output layer uses identity function
-            output_num_units=30,  # 30 target values
+            output_num_units=self._output_size,  # 30 target values
 
             ## optimization method:
             update=nesterov_momentum,
@@ -38,7 +40,7 @@ class Network:
             verbose=1,
             )
 
-        net.fit(X, y)
+        self.net.fit(X, y)
 
         utils.save_net(net, self.name)
 
