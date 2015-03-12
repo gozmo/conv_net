@@ -17,15 +17,24 @@ class Network:
         self._input_size = input_size
         self._output_size = output_size
 
+<<<<<<< HEAD
     def run(self, X, y):
         self.net = NeuralNet(
+=======
+    def run(self, X, y, input_size=9216):
+        net = NeuralNet(
+>>>>>>> input size parametrized and added __init__
             layers=[   #three layers: one hidden layer
                 ('input', layers.InputLayer),
                 ('hidden', layers.DenseLayer),
                 ('output', layers.DenseLayer),
                 ],
              #layer parameters:
+<<<<<<< HEAD
             input_shape=(128, self._input_size),  # 128 images per batch times 96x96 input pixels
+=======
+            input_shape=(128, input_size),  # 128 images per batch times 96x96 input pixels
+>>>>>>> input size parametrized and added __init__
             hidden_num_units=100,  # number of units in hidden layer
             output_nonlinearity=None,  # output layer uses identity function
             output_num_units=self._output_size,  # 30 target values
