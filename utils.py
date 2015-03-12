@@ -5,6 +5,7 @@ from matplotlib import pyplot
 from sklearn.utils import shuffle
 import numpy as np
 import os
+from PIL import Image
 
 FTRAIN = '~/projects/conv_nn_facial_keypoints/data/training.csv'
 FTEST = '~/projects/conv_nn_facial_keypoints/data/test.csv'
@@ -111,3 +112,29 @@ class AdjustVariable(object):
         epoch = train_history[-1]['epoch']
         new_value = utils.float32(self.ls[epoch - 1])
         getattr(nn, self.name).set_value(new_value)
+
+
+def resize_dataset(source_path, target_path, resolution):
+    files = _get_files(source_path)
+    for filename in files:
+        image = _load_image(source_path, filename)
+        resized_image = _resize_image(image, resolution)
+        _write_image(resized_image, filename, target_path)
+
+
+def _get_files(source_path):
+    VALID_IMAGE_FORMATS = ["jpeg", "jpg", "png"]
+    images_files = [filename for filename
+                       in os.listdir(source_path)]
+    return images_files
+
+def _load_image(path, filename):
+    filepath = path + os.sep + filename
+    return Image.open(open(filepath))
+
+def _resize_image(image, resolution):
+    return image.resize(resolution)
+
+def _write_image(image, filename, path):
+    filepath = path + os.sep + filename
+    image.save(filepath)
