@@ -11,7 +11,7 @@ except ImportError:
 	MaxPool2DLayer = layers.MaxPool2DLayer
 
 class BasicNetwork:
-    self.name = "basic_network"
+    name = "basic_network"
 
     def train(self, X, y):
         self._input_size = len(X[0])
