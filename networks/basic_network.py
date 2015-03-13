@@ -13,20 +13,20 @@ except ImportError:
 	MaxPool2DLayer = layers.MaxPool2DLayer
 
 class BasicNetwork:
-    self._name = "basic_network"
+    self.name = "basic_network"
 
     def train(self, X, y):
         self._input_size = len(X[0])
         self._output_size = len(y[0])
 
-        self._run(X,y)
+        self.setup_network()
 
         self._net.fit(X, y)
         self._save_net()
 
         print "Mean square error:", mean_squared_error(self._net.predict(X), y)
 
-    def _run(X,y):
+    def setup_network(X,y):
         print "#"*10 + "\nself._run needs to be implemented, running basic network\n" + "#"*10
         self._net = NeuralNet(
             layers=[   #three layers: one hidden layer
@@ -52,5 +52,5 @@ class BasicNetwork:
 
 
     def _save_net(self):
-        with open('%s.pickle'% self._name, 'wb') as f:
+        with open('%s.pickle'% self.name, 'wb') as f:
             pickle.dump(self._net, f, -1)

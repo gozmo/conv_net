@@ -1,7 +1,6 @@
 from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
-import utils
 from sklearn.metrics import mean_squared_error
 from basic_network import BasicNetwork
 
@@ -15,10 +14,8 @@ except ImportError:
 class Network(BasicNetwork):
     def __init__(self):
         self.name = "net1"
-        self._input_size = input_size
-        self._output_size = output_size
 
-    def run(self, X, y):
+    def setup_network(self):
         self.net = NeuralNet(
             layers=[   #three layers: one hidden layer
                 ('input', layers.InputLayer),
@@ -41,8 +38,3 @@ class Network(BasicNetwork):
             verbose=1,
             )
 
-        self.net.fit(X, y)
-
-        utils.save_net(net, self.name)
-
-        print mean_squared_error(net.predict(X), y)
