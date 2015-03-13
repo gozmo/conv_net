@@ -1,7 +1,6 @@
 from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
-import utils
 from sklearn.metrics import mean_squared_error
 from basic_network import BasicNetwork
 
