@@ -49,9 +49,6 @@ def load2d(test=False, cols=None):
 def float32(k):
     return np.cast['float32'](k)
 
-def save_net(net, name):
-    with open('%s.pickle'% name, 'wb') as f:
-        pickle.dump(net, f, -1)
 
 def plot_result(net):
     def plot_sample(x, y, axis):

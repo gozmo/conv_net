@@ -3,6 +3,7 @@ from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 import utils
 from sklearn.metrics import mean_squared_error
+from basic_network import BasicNetwork
 
 try:
 	from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -11,30 +12,30 @@ except ImportError:
 	Conv2DLayer = layers.Conv2DLayer
 	MaxPool2DLayer = layers.MaxPool2DLayer
 
-class Network:
-    def __init__(self, input_size=9216, output_size=30):
-        self.name = "net1"
-        self._input_size = input_size
-        self._output_size = output_size
+class BasicNetwork:
+    self._name = "basic_network"
 
-<<<<<<< HEAD
-    def run(self, X, y):
-        self.net = NeuralNet(
-=======
-    def run(self, X, y, input_size=9216):
-        net = NeuralNet(
->>>>>>> input size parametrized and added __init__
+    def train(self, X, y):
+        self._input_size = len(X[0])
+        self._output_size = len(y[0])
+
+        self._run(X,y)
+
+        self._net.fit(X, y)
+        self._save_net()
+
+        print "Mean square error:", mean_squared_error(self._net.predict(X), y)
+
+    def _run(X,y):
+        print "#"*10 + "\nself._run needs to be implemented, running basic network\n" + "#"*10
+        self._net = NeuralNet(
             layers=[   #three layers: one hidden layer
                 ('input', layers.InputLayer),
                 ('hidden', layers.DenseLayer),
                 ('output', layers.DenseLayer),
                 ],
              #layer parameters:
-<<<<<<< HEAD
             input_shape=(128, self._input_size),  # 128 images per batch times 96x96 input pixels
-=======
-            input_shape=(128, input_size),  # 128 images per batch times 96x96 input pixels
->>>>>>> input size parametrized and added __init__
             hidden_num_units=100,  # number of units in hidden layer
             output_nonlinearity=None,  # output layer uses identity function
             output_num_units=self._output_size,  # 30 target values
@@ -45,12 +46,11 @@ class Network:
             update_momentum=0.9,
 
             regression=True,  # flag to indicate we're dealing with regression problem
-            max_epochs=400,  # we want to train this many epochs
+            max_epochs=200,  # we want to train this many epochs
             verbose=1,
             )
 
-        self.net.fit(X, y)
 
-        utils.save_net(net, self.name)
-
-        print mean_squared_error(net.predict(X), y)
+    def _save_net(self):
+        with open('%s.pickle'% self._name, 'wb') as f:
+            pickle.dump(self._net, f, -1)
