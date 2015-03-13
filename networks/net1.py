@@ -16,7 +16,7 @@ class Network(BasicNetwork):
         self.name = "net1"
 
     def setup_network(self):
-        self.net = NeuralNet(
+        self._net = NeuralNet(
             layers=[   #three layers: one hidden layer
                 ('input', layers.InputLayer),
                 ('hidden', layers.DenseLayer),
