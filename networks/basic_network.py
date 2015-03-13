@@ -1,7 +1,12 @@
+import cPickle as pickle
 from lasagne import layers
 from lasagne.updates import nesterov_momentum
 from nolearn.lasagne import NeuralNet
 from sklearn.metrics import mean_squared_error
+import sys
+
+#to be able to store big networks
+sys.setrecursionlimit(10000)
 
 try:
 	from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
