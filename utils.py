@@ -6,6 +6,8 @@ from sklearn.utils import shuffle
 import numpy as np
 import os
 from PIL import Image
+from threading import Lock,Thread
+from Queue import Queue
 
 FTRAIN = '~/projects/conv_nn_facial_keypoints/data/training.csv'
 FTEST = '~/projects/conv_nn_facial_keypoints/data/test.csv'
@@ -112,26 +114,50 @@ class AdjustVariable(object):
 
 
 def resize_dataset(source_path, target_path, resolution):
-    files = _get_files(source_path)
-    for filename in files:
-        image = _load_image(source_path, filename)
-        resized_image = _resize_image(image, resolution)
-        _write_image(resized_image, filename, target_path)
+    resize_process = ResizeProcess(source_path, target_path, resolution)
+    resize_process.get_files()
+    resize_process.start()
 
 
-def _get_files(source_path):
-    VALID_IMAGE_FORMATS = ["jpeg", "jpg", "png"]
-    images_files = [filename for filename
-                       in os.listdir(source_path)]
-    return images_files
+class ResizeProcess:
+    def __init__(self, source_path, target_path, resolution):
+        self._lock = Lock()
+        self._source_path = source_path
+        self._target_path = target_path
+        self._resolution = resolution
+        self.image_files = []
 
-def _load_image(path, filename):
-    filepath = path + os.sep + filename
-    return Image.open(open(filepath))
+    def get_files(self):
+        VALID_IMAGE_FORMATS = ["jpeg", "jpg", "png"]
+        self.image_files = [filename for filename
+                           in os.listdir(self._source_path)]
 
-def _resize_image(image, resolution):
-    return image.resize(resolution)
+    def start(self):
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
+        Thread(target=self._resize_image_thread).start()
 
-def _write_image(image, filename, path):
-    filepath = path + os.sep + filename
-    image.save(filepath)
+    def _resize_image_thread(self):
+        while len(self.image_files) > 0:
+            with self._lock:
+                filename = self.image_files.pop()
+
+            image = self._load_image(self._source_path, filename)
+            resized_image = self._resize_image(image, self._resolution)
+            self._write_image(resized_image, filename, self._target_path)
+
+    def _load_image(self, path, filename):
+        filepath = path + os.sep + filename
+        return Image.open(open(filepath))
+
+    def _resize_image(self, image, resolution):
+        return image.resize(resolution)
+
+    def _write_image(self, image, filename, path):
+        filepath = path + os.sep + filename
+        image.save(filepath)
