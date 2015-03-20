@@ -1,7 +1,6 @@
 from lasagne import layers
 from nolearn.lasagne import NeuralNet
-import utils
-from sklearn.metrics import mean_squared_error
+from basic_network import BasicNetwork
 
 
 try:
@@ -11,16 +10,16 @@ except ImportError:
 	Conv2DLayer = layers.Conv2DLayer
 	MaxPool2DLayer = layers.MaxPool2DLayer
 
-class Network:
+class Network(BasicNetwork):
     def __init__(self):
         self.name = "net2"
 
-    def run(self, X, y):
+    def setup_network(self):
         # use the cuda-convnet implementations of conv and max-pool layer
         Conv2DLayer = layers.cuda_convnet.Conv2DCCLayer
         MaxPool2DLayer = layers.cuda_convnet.MaxPool2DCCLayer
 
-        net = NeuralNet(
+        self._net = NeuralNet(
             layers=[
                 ('input', layers.InputLayer),
                 ('conv1', Conv2DLayer),
@@ -47,8 +46,3 @@ class Network:
             max_epochs=1000,
             verbose=1,
             )
-
-        net.fit(X, y)
-
-        utils.save_net(net, self.name)
-        print mean_squared_error(net.predict(X), y)
