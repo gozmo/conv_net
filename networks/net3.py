@@ -1,10 +1,9 @@
-from lasagne.updates import nesterov_momentum
-from nolearn.lasagne import BatchIterator
 from nolearn.lasagne import NeuralNet
 from lasagne import layers
 from sklearn.metrics import mean_squared_error
 import lasagne.layers.cuda_convnet
-import utils
+from basic_network import BasicNetwork
+from basic_network import FlipBatchIterator
 
 try:
     from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -45,12 +44,7 @@ class Network:
             update_momentum=0.9,
 
             regression=True,
-        batch_iterator_train=utils.FlipBatchIterator(batch_size=128),
+        batch_iterator_train=FlipBatchIterator(batch_size=128),
             max_epochs=3000,
             verbose=1,
             )
-
-        net.fit(X, y)
-
-        utils.save_net(net, self.name)
-        print mean_squared_error(net.predict(X), y)
