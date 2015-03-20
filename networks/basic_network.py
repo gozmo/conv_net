@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 import sys
 
 #to be able to store big networks
-sys.setrecursionlimit(10000)
+sys.setrecursionlimit(100000)
 
 try:
 	from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -25,9 +25,6 @@ class BasicNetwork:
         self.setup_network()
 
         self._net.fit(X, y)
-        self._save_net()
-
-        print "Mean square error:", mean_squared_error(self._net.predict(X), y)
 
     def setup_network(X,y):
         print "#"*10 + "\nself._run needs to be implemented, running basic network\n" + "#"*10
@@ -53,7 +50,9 @@ class BasicNetwork:
             verbose=1,
             )
 
-
-    def _save_net(self):
+    def save_net(self):
         with open('%s.pickle'% self.name, 'wb') as f:
             pickle.dump(self._net, f, -1)
+
+    def predict(self, X):
+        return self._net.predict(X)
