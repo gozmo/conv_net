@@ -12,15 +12,15 @@ except ImportError:
     Conv2DLayer =layers.Conv2DLayer
     MaxPool2DLayer =layers.MaxPool2DLayer
 
-class Network:
+class Network(BasicNetwork):
     def __init__(self):
         self.name = "net3"
 
-    def run(self, X, y):
+    def setup_network(self):
         Conv2DLayer =layers.cuda_convnet.Conv2DCCLayer
         MaxPool2DLayer =layers.cuda_convnet.MaxPool2DCCLayer
 
-        net = NeuralNet(
+        self._net = NeuralNet(
             layers=[
                 ('input', layers.InputLayer),
                 ('conv1', Conv2DLayer),
