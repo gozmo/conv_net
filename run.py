@@ -1,11 +1,14 @@
 import argparse
 import imp
 import utils
+import sys
+
+sys.path.append("networks")
 
 def run_networks(network_names):
     networks = []
     for network_name in network_names:
-        f, filename, description = imp.find_module(network_name)
+        f, filename, description = imp.find_module(network_name, ["networks"])
         network_module = imp.load_module(network_name, f, filename, description)
         network = network_module.Network()
         networks.append(network)
@@ -15,10 +18,10 @@ def run_networks(network_names):
     for network in networks:
         if network.name == "net1":
             print "net1"
-            network.run(X_1d, y_1d)
+            network.train(X_1d, y_1d)
         else:
             print network.name
-            network.run(X_2d, y_2d)
+            network.train(X_2d, y_2d)
 
 if '__main__' == __name__:
     parser = argparse.ArgumentParser(description='Train networks')

@@ -9,8 +9,8 @@ from PIL import Image
 from threading import Lock,Thread
 from Queue import Queue
 
-FTRAIN = '~/projects/conv_nn_facial_keypoints/data/training.csv'
-FTEST = '~/projects/conv_nn_facial_keypoints/data/test.csv'
+FTRAIN = 'data/training.csv'
+FTEST = 'data/test.csv'
 
 def load(test=False, cols=None):
     """Loads data from FTEST if *test* is True, otherwise from FTRAIN.
