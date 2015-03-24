@@ -21,6 +21,7 @@ class BasicNetwork:
     name = "basic_network"
 
     def train(self, X, y):
+        self._shape = X[0].shape
         self._input_size = len(X[0])
         self._output_size = len(y[0])
 
