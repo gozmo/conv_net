@@ -4,8 +4,10 @@ from nolearn.lasagne import BatchIterator
 from nolearn.lasagne import NeuralNet
 import lasagne.layers.cuda_convnet
 import theano
-import utils
 from sklearn.metrics import mean_squared_error
+from basic_network import AdjustVariable
+from basic_network import BasicNetwork
+from basic_network import FlipBatchIterator
 
 try:
     from lasagne.layers.cuda_convnet import Conv2DCCLayer as Conv2DLayer
@@ -14,16 +16,16 @@ except ImportError:
     Conv2DLayer = layers.Conv2DLayer
     MaxPool2DLayer = layers.MaxPool2DLayer
 
-class Network:
+class Network(BasicNetwork):
     def __init__(self):
         self.name = "net5"
 
-    def run(self, X, y):
+    def setup_network(self):
         # use the cuda-convnet implementations of conv and max-pool layer
         Conv2DLayer = layers.cuda_convnet.Conv2DCCLayer
         MaxPool2DLayer = layers.cuda_convnet.MaxPool2DCCLayer
 
-        net = NeuralNet(
+        self._net = NeuralNet(
             layers=[
                 ('input', layers.InputLayer),
                 ('conv1', Conv2DLayer),
@@ -36,26 +38,22 @@ class Network:
                 ('hidden5', layers.DenseLayer),
                 ('output', layers.DenseLayer),
                 ],
-            input_shape=(None, 1, 96, 96),
+            input_shape=(None, self._shape[0], self._shape[1], self._shape[2]),
             conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_ds=(2, 2),
             conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_ds=(2, 2),
             conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_ds=(2, 2),
             hidden4_num_units=500, hidden5_num_units=500,
-            output_num_units=30, output_nonlinearity=None,
+            output_num_units=self._output_size, output_nonlinearity=None,
 
-            update_learning_rate=theano.shared(utils.float32(0.03)),
-            update_momentum=theano.shared(utils.float32(0.9)),
+            update_learning_rate=theano.shared(self.float32(0.03)),
+            update_momentum=theano.shared(self.float32(0.9)),
 
             regression=True,
-            batch_iterator_train=utils.FlipBatchIterator(batch_size=128),
+            batch_iterator_train=FlipBatchIterator(batch_size=128),
             on_epoch_finished=[
-                utils.AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
-                utils.AdjustVariable('update_momentum', start=0.9, stop=0.999),
+                AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
+                AdjustVariable('update_momentum', start=0.9, stop=0.999),
             ],
             max_epochs=3000,
             verbose=1,
             )
-
-        net.fit(X, y)
-        utils.save_net(net, self.name)
-        print mean_squared_error(net.predict(X), y)
