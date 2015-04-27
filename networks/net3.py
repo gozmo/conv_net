@@ -20,7 +20,6 @@ class Network(BasicNetwork):
         Conv2DLayer =layers.cuda_convnet.Conv2DCCLayer
         MaxPool2DLayer =layers.cuda_convnet.MaxPool2DCCLayer
 
-        print self._shape
         self._net = NeuralNet(
             layers=[
                 ('input', layers.InputLayer),
