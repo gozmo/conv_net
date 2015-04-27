@@ -20,6 +20,7 @@ class Network(BasicNetwork):
         Conv2DLayer =layers.cuda_convnet.Conv2DCCLayer
         MaxPool2DLayer =layers.cuda_convnet.MaxPool2DCCLayer
 
+        print self._shape
         self._net = NeuralNet(
             layers=[
                 ('input', layers.InputLayer),
@@ -33,18 +34,20 @@ class Network(BasicNetwork):
                 ('hidden5', layers.DenseLayer),
                 ('output', layers.DenseLayer),
                 ],
-            input_shape=(None, 1, self._shape[0], self._shape[1]),
+            input_shape=(None, 1, self._shape[1], self._shape[2]),
             conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_ds=(2, 2),
             conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_ds=(2, 2),
             conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_ds=(2, 2),
-            hidden4_num_units=500, hidden5_num_units=500,
-            output_num_units=30, output_nonlinearity=None,
+            hidden4_num_units=500,
+            hidden5_num_units=500,
+            output_num_units=self._output_size,
+            output_nonlinearity=None,
 
             update_learning_rate=0.01,
             update_momentum=0.9,
 
             regression=True,
-        batch_iterator_train=FlipBatchIterator(batch_size=128),
+            batch_iterator_train=FlipBatchIterator(batch_size=128),
             max_epochs=3000,
             verbose=1,
             )
