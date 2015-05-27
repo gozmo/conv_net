@@ -48,5 +48,5 @@ class Network(BasicNetwork):
             regression=True,
             batch_iterator_train=FlipBatchIterator(batch_size=128),
             max_epochs=3000,
-            verbose=1,
+            verbose=0,
             )

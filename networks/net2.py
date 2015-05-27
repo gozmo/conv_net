@@ -46,5 +46,5 @@ class Network(BasicNetwork):
 
             regression=True,
             max_epochs=1000,
-            verbose=1,
+            verbose=0,
             )

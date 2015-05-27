@@ -65,5 +65,5 @@ class Network(BasicNetwork):
                 AdjustVariable('update_momentum', start=0.9, stop=0.999),
             ],
             max_epochs=10000,
-            verbose=1,
+            verbose=0,
             )
