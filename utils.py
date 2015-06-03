@@ -8,9 +8,20 @@ import os
 from PIL import Image
 from threading import Lock,Thread
 from Queue import Queue
+import logging
+from time import gmtime, strftime
 
 FTRAIN = 'data/training.csv'
 FTEST = 'data/test.csv'
+DATEFORMAT = "%Y-%m-%d_%H:%M:%S"
+
+if not os.path.exists("logs"):
+    os.makedirs("logs")
+time_stamp = strftime(DATEFORMAT, gmtime())
+logging.basicConfig(filename='logs/%s.log' % (time_stamp),
+                    level=logging.DEBUG,
+                    datefmt=DATEFORMAT,
+                    )
 
 def load(test=False, cols=None):
     """Loads data from FTEST if *test* is True, otherwise from FTRAIN.
@@ -146,3 +157,8 @@ class ResizeProcess:
     def _write_image(self, image, filename, path):
         filepath = path + os.sep + filename
         image.save(filepath)
+
+def log(string):
+    time_stamp = strftime(DATEFORMAT, gmtime())
+    logging.info(string)
+    print time_stamp, string

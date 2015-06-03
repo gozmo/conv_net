@@ -27,7 +27,6 @@ class BasicNetwork:
 
         self.setup_network()
 
-        print X.shape
         self._net.fit(X, y)
 
     def setup_network(X,y):
