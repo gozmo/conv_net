@@ -14,3 +14,4 @@ def crossvalidation(dataset, network_class, number_of_folds):
         log("fold kappa: %s" % (kappa))
     average = sum(scores) / len(scores)
     log("kappa average = %s" % average)
+    return average, scores
