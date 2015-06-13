@@ -7,6 +7,16 @@ class BaseDataset:
         self._X = []
         self._y = []
 
+    def read_dataset(self, filepath):
+        self.read_dataset()
+        self.read_validation_set()
+
+    def read_training_set(self):
+        print "implement this function"
+
+    def read_validation_set(self):
+        print "implement this function"
+
     def _read_image(self, filepath):
         image = misc.imread(filepath)
 
@@ -27,9 +37,6 @@ class BaseDataset:
         if not self._flatten:
             X = X.reshape(-1, 1, self._height, self._width)
         return X,y
-
-    def read_training_set(self):
-        print "implement this function"
 
     def cross_validation(self, number_of_folds):
         fold_sets = [randrange(number_of_folds)
