@@ -33,12 +33,10 @@ class BaseDataset:
         X = X.astype(np.float32)
         if not self._flatten:
             X = X.reshape(-1, 1, self._height, self._width)
-        print X.__class__, y.__class__
         return X,y
 
     def cross_validation(self, number_of_folds):
         self._X, self._y = self.read_training_set()
-        print "length" , len(self._X)
         fold_sets = [randrange(number_of_folds)
                      for x
                      in xrange(len(self._X))]
@@ -55,22 +53,21 @@ class BaseDataset:
         elif set_type == "validation":
             eq = lambda x,y: x!=y
 
-        print len(fold_sets), len(self._X), self._training_set_size, len(fold_sets)
+        print len(self._X), len(fold_sets)
 
         return [self._X[i]
                 for i
-                in xrange(self._training_set_size)
+                in xrange(len(fold_sets))
                 if eq(fold_sets[i], fold)], \
                [self._y[i]
                 for i
-                in xrange(self._training_set_size)
+                in xrange(len(fold_sets))
                 if eq(fold_sets[i],fold)]
 
     def _extract_validation_training_set(self,
                                          fold_sets,
                                          fold):
 
-            print len(self._X), len(fold_sets)
             return [self._X[i]
                     for i
                     in xrange(self._training_set_size)
